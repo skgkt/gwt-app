@@ -1,0 +1,13 @@
+# Gralde
+.gradle/
+build/
+
+# IDEA
+out/
+*.iml
+*.ipr
+*.iws
+
+# GWT
+gwt-unitCache/
+war/

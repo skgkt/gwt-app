@@ -1,0 +1,64 @@
+plugins {
+    id "war"
+    id "idea"
+}
+
+group = "com.github.skgkt"
+version = "0.0.1-SNAPSHOT"
+
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+
+ext {
+    gwtVersion = "2.8.2"
+    gwtOutputDir = file("$buildDir/gwt")
+    gwtUnitCacheDir = buildDir
+    gwtModuleNames = 'com.github.skgkt.GwtApp'
+}
+
+webAppDirName = gwtOutputDir
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly "com.google.gwt:gwt-user:$gwtVersion"
+    compileOnly "com.google.gwt:gwt-dev:$gwtVersion"
+    runtime "com.google.gwt:gwt-servlet:$gwtVersion"
+    testCompile "junit:junit:4.+"
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs = ['src/main/java', 'src/main/resources']
+            exclude '**/*.java'
+        }
+    }
+    test {
+        resources {
+            srcDirs = ['src/test/java', 'src/test/resources']
+            exclude '**/*.java'
+        }
+    }
+}
+
+task compileGwt(type: JavaExec, dependsOn: compileJava) {
+    description = 'GWT compile to JavaScript (production mode)'
+    classpath = files(sourceSets.main.java.srcDirs)
+    classpath += sourceSets.main.compileClasspath
+    main = 'com.google.gwt.dev.Compiler'
+    systemProperties = ['gwt.persistentunitcachedir': gwtUnitCacheDir]
+    args = ['-war', gwtOutputDir]
+    args gwtModuleNames
+}
+
+task processGwtResources(type: Copy) {
+    from 'src/main/webapp'
+    into gwtOutputDir
+}
+
+war {
+    dependsOn = ['compileGwt', 'processGwtResources']
+}
