@@ -3,11 +3,13 @@ package com.github.skgkt.server;
 import com.github.skgkt.client.GreetingService;
 import com.github.skgkt.shared.FieldVerifier;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import org.springframework.stereotype.Component;
 
 /**
  * The server-side implementation of the RPC service.
  */
 @SuppressWarnings("serial")
+@Component
 public class GreetingServiceImpl extends RemoteServiceServlet implements
     GreetingService {
 

@@ -1,6 +1,9 @@
 plugins {
     id "war"
     id "idea"
+    id "org.jetbrains.kotlin.jvm" version "1.2.21"
+    id "org.jetbrains.kotlin.plugin.spring" version "1.2.21"
+    id "org.springframework.boot" version "1.5.10.RELEASE"
 }
 
 group = "com.github.skgkt"
@@ -23,10 +26,13 @@ repositories {
 }
 
 dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib"
+    compile "org.springframework.boot:spring-boot-starter-web"
     compileOnly "com.google.gwt:gwt-user:$gwtVersion"
     compileOnly "com.google.gwt:gwt-dev:$gwtVersion"
     runtime "com.google.gwt:gwt-servlet:$gwtVersion"
     testCompile "junit:junit:4.+"
+    testCompile "org.springframework.boot:spring-boot-test"
 }
 
 sourceSets {
@@ -61,4 +67,23 @@ task processGwtResources(type: Copy) {
 
 war {
     dependsOn = ['compileGwt', 'processGwtResources']
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+kapt {
+    useBuildCache = true
+}
+
+task copyGwtResources(type: Copy) {
+    from gwtOutputDir
+    into file("$buildDir/resources/main/resources")
+}
+
+bootRun {
+    dependsOn += ['compileGwt', 'processGwtResources', 'copyGwtResources']
 }
